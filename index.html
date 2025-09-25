@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>고해소</title>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --headline-size: clamp(32px, 7vw, 88px); 
+    --panel-w: min(420px, 42vw);
+  }
+  *{ box-sizing:border-box; }
+  html, body{ height:100%; }
+  body{
+    margin:0; height:100vh; overflow:hidden;
+    font-family:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+    color:#fff;
+    background:#000 url("sorry.jpeg") center/cover no-repeat fixed;
+    position:relative;
+  }
+
+  
+  #tint{
+    position:fixed; inset:0; pointer-events:none;
+    background:#1B0A54;  
+    opacity:.28;         
+    z-index:0;
+  }
+
+  .panel{
+    position:absolute; left:2.5vw; top:2.5vh;
+    width:var(--panel-w);
+    background:#ffffffd9; color:#111;
+    border-radius:14px; padding:16px 18px 14px;
+    z-index:1;
+  }
+  .panel h2{ margin:0 0 10px; font-size:18px; letter-spacing:-.2px; }
+  .field{ display:flex; gap:10px; margin:10px 0; align-items:center; }
+  .field label{ min-width:64px; font-size:14px; color:#333; }
+  .panel input[type="text"],
+  .panel input[type="date"],
+  .panel input[type="color"]{
+    flex:1; padding:10px 12px; border-radius:10px; border:1px solid #ddd;
+    font-size:14px; outline:none;
+  }
+  .panel input[type="color"]{ padding:0; height:40px; }
+
+
+  .headline{
+    position:absolute; left:50%; top:45%; transform:translate(-50%,-50%);
+    width:88vw; text-align:center;
+    font-weight:600; line-height:1.15;
+    font-size:var(--headline-size);
+    z-index:1;
+  }
+
+  .blackbar{
+    position:absolute; left:10%; right:10%;
+    bottom:8vh; height:28vh; min-height:160px;
+    background:#000; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px; z-index:1;
+  }
+  #monitor{
+    width:100%; height:100%; color:#fff;
+    font-size:clamp(18px, 2.4vw, 28px);
+    line-height:1.5; word-break:keep-all; overflow:auto;
+  }
+
+  @media (max-width:640px){
+    .blackbar{ left:4%; right:4%; bottom:6vh; }
+    .panel{ left:4vw; width:92vw; }
+  }
+</style>
+</head>
+<body>
+
+
+  <div id="tint" aria-hidden="true"></div>
+
+
+  <section class="panel" aria-label="입력 영역">
+    <h2>고해소</h2>
+    <div class="field">
+      <label for="t">죄목</label>
+      <input id="t" type="text" placeholder="무엇을 고해하시겠습니까?" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label for="d">일자</label>
+      <input id="d" type="date" />
+    </div>
+    <div class="field">
+      <label for="c">조명색</label>
+      <input id="c" type="color" value="#1B0A54" title="필터 색상" />
+    </div>
+    <p style="margin:.25rem 0 0; font-size:12px; color:#666">
+      * ‘조명색’으로 고해 분위기를 바꿔보세요.
+    </p>
+  </section>
+
+
+  <h1 class="headline">어 왔니. 이제 네 죄를 말해보자.</h1>
+
+
+  <div class="blackbar" role="region" aria-live="polite">
+    <div id="monitor">저는 사실 죄를 지었습니다…</div>
+  </div>
+
+<script>
+  const t = document.getElementById('t');
+  const d = document.getElementById('d');
+  const c = document.getElementById('c');
+  const monitor = document.getElementById('monitor');
+  const tint = document.getElementById('tint');
+
+  function render(){
+    const text = t.value?.trim() || '';
+    const date = d.value ? new Date(d.value).toLocaleDateString('ko-KR') : '';
+    let out = '';
+    if(text) out += `“${text}”\n`;
+    if(date) out += `이 고해는 ${date}에 이루어졌습니다.`;
+    monitor.textContent = out || '저는 사실 죄를 지었습니다…';
+  }
+
+  t.oninput = function(){
+    monitor.innerHTML = t.value;
+    render();
+  }
+  c.oninput = function(){
+    console.log("c.value");
+    tint.style.background = c.value;
+  }
+  d.onchange = function(){
+    monitor.innerHTML += (d.value ? `${d.value}일 입니다.` : '');
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
